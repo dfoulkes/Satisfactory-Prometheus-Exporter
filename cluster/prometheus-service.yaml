@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: satisfactory-exporter-monitor
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: satisfactory-exporter-monitor
+    name: satisfactory-servicemonitor
+spec:
+  selector:
+    matchLabels:
+      app: satisfactory
+      namespace: games
+  endpoints:
+    - port: 8075
+      interval: 30s
+      path: /metrics

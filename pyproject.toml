@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "SatisfactoryPrometheusExporter"
+version = "0.1.0"
+description = ""
+authors = ["Dan Foulkes <danfoulkes@gmail.com>"]
+packages = [
+    { include = "app/*" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "^3.0.3"
+requests = "^2.25.1"
+prometheus_client = "^0.20.0"
+python-dotenv = "^1.0.1"
+#load-dotenv = "^0.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+satisfaction_prometheus_exporter = "flask.cli:main"
