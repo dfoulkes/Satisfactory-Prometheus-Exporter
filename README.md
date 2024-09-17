@@ -155,3 +155,37 @@ spec:
         storageClassName: longhorn
 
 ```
+
+##  Create Server Secrets
+
+1. Generate base64 encoded values for the SATISFACTORY_URL, SATISFACTORY_PORT and SATISFACTORY_PASSWORD
+```shell
+echo -n "http://<nodeport or LB IP>" | base64
+echo -n "<nodeport or LB port>" | base64
+echo -n "<admin password for the game server>" | base64
+```
+2. Update the secret.yaml file with the values generated
+```yaml
+kind: Secret
+apiVersion: v1
+metadata:
+  name: satisfactory-server
+  namespace: game
+type: Opaque
+data:
+  SATISFACTORY_URL: <base64 encoded url>
+  SATISFACTORY_PORT: <base64 encoded port>
+  SATISFACTORY_PASSWORD: <base64 encoded password>
+```
+3. Apply the secret
+```shell
+kubectl apply -f secret.yaml
+```
+
+## Apply Prometherus Operator Service
+
+```bash
+kubectl apply -f prometheus-operator-service.yaml
+```
+
+>Note: You will also need to update your prometheus operator to include the new service
