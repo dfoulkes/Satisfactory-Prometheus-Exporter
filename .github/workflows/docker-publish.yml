@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: '39 22 * * *'
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/*" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
@@ -23,8 +23,32 @@ env:
 
 
 jobs:
-  build:
 
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: install python and poetry
+        uses: actions/setup-python@v5.2.0
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+      - name: Build
+        run: |
+          poetry build
+      - name: cache dist directory
+        uses: actions/cache/save@v4.0.2
+        with:
+          path: ./dist
+          key: wheel-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+  ### Build and push Docker image
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -36,6 +60,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+
+      - name: get dist directory from cache
+        uses: actions/cache/restore@v4.0.2
+        with:
+            path: ./dist
+            key: wheel-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: show current directory
+        run: |
+          ls -la
+          ls -la dist
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
