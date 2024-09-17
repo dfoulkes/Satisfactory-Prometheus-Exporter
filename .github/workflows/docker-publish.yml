@@ -61,6 +61,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: make a dist folder
+        run: |
+          mkdir -p dist
 
       - name: get dist directory from cache
         uses: actions/cache/restore@v4.0.2
