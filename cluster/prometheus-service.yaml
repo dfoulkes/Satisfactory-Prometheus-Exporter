@@ -10,8 +10,10 @@ spec:
   selector:
     matchLabels:
       app: satisfactory
-      namespace: games
+  namespaceSelector:
+    matchNames:
+      - games
   endpoints:
-    - port: 8075
+    - port: prometheus
       interval: 30s
       path: /metrics
