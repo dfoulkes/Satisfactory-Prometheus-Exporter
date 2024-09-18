@@ -124,7 +124,7 @@ spec:
             - name: satisfactory-data
               mountPath: /config
         - name: prometheus-exporter
-          image: ghcr.io/dfoulkes/satisfactory-prometheus-exporter:latest
+          image: ghcr.io/dfoulkes/satisfactory-prometheus-exporter:main
           ports:
             - containerPort: 8075
               name: "metrics"
