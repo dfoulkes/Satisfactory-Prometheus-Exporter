@@ -10,6 +10,10 @@ support for prometheus. Using the built-in api server, we're capturing game meta
 
 ## How to use
 
+This script is designed to run in a kubernetes cluster. However, you can run this locally for testing.
+>Note: If your satisfactory server is running on the same network and you're developing on a Windows machine
+> then network type host will work to see the server however you will not be able to view the metrics when running in docker.
+> Therefore it is simpler to run the script native on the host machine using poetry.
 
 ### Testing Locally
 
@@ -61,7 +65,7 @@ data:
   
 ```
 
-### Change the Service kind to include the prometheus exporter
+### Change the StatefulSet kind to include the prometheus exporter
 
 ```yaml
 ---
@@ -156,7 +160,16 @@ spec:
 
 ```
 
+---
+
 ##  Create Server Secrets
+
+The following script will create the base64 encoded values for the SATISFACTORY_URL, SATISFACTORY_PORT and SATISFACTORY_PASSWORD.
+The encoded values can then be pasted into the secret.yaml file in the next step.
+```shell
+
+```yaml
+
 
 1. Generate base64 encoded values for the SATISFACTORY_URL, SATISFACTORY_PORT and SATISFACTORY_PASSWORD
 ```shell
@@ -180,6 +193,32 @@ data:
 3. Apply the secret
 ```shell
 kubectl apply -f secret.yaml
+```
+
+4. Update the service.yaml file with the new service
+```yaml
+metadata:
+  name: satisfactory
+  namespace: games
+  labels:
+    app: satisfactory
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 7777
+      protocol: UDP
+      name: "game"
+      targetPort: 7777
+    - port: 7777
+      protocol: TCP
+      name: "gametcp"
+      targetPort: 7777
+    - port: 8075
+      protocol: TCP
+      name: "prometheus"
+      targetPort: 8075
+  selector:
+    app: satisfactory
 ```
 
 ## Apply Prometherus Operator Service
